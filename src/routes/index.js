@@ -8,14 +8,18 @@ import {
 import HomePage from '../pages/home';
 import Login from '../pages/login';
 
-
 class Routes extends Component {
+
     render() {
         return (
             <div className="App">
                 <Router>
-                    <Route path='/login' component={Login}/>
-                    <Route path='/home' component={HomePage}/>
+                    <Route path="/" render={() => localStorage.getItem('authenticated_user') ?
+                        (<Redirect to="home" />)
+                        :
+                        (<Redirect to="login" />)} />
+                    <Route path='/login' component={Login} />
+                    <Route path='/home' component={HomePage} />
                 </Router>
             </div>
         )

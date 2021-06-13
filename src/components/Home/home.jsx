@@ -1,37 +1,50 @@
 import React, { Component } from 'react';
-import { AppBar, Avatar } from '@material-ui/core';
+import { AppBar, Avatar, createMuiTheme, MuiThemeProvider, Divider } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PlaceholderLoader from '../comomon/placeholderLoader';
+import { getUserDetails } from '../../services/service';
+
+const theme = createMuiTheme({
+    overrides: {
+        MuiAppBar: {
+            root: {
+                zIndex: '-1100'
+            }
+        }
+    }
+})
 
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             page: 0,
-            images: []
+            userData: []
         }
+        this.showContactList = this.showContactList.bind(this);
+        this.getContactList = this.getContactList.bind(this);
+        this.handleLogout = this.handleLogout.bind(this);
     }
 
     componentDidMount() {
-        axios.get('https://randomuser.me/api/?seed=${seed}&page=${page}&results=30')
-            .then((res) => {
-                console.log(res.data);
-                this.setState({ images: [...this.state.images, ...res.data.results] })
-            })
+        this.showContactList();
+    }
 
+    showContactList = () => {
+        getUserDetails()
+            .then((res) => {
+                // console.log(res);
+                this.setState({ userData: [...this.state.userData, ...res.results] })
+            })
     }
 
     getContactList = () => {
         setTimeout(() => {
-            axios.get('https://randomuser.me/api/?seed=${seed}&page=${page}&results=30')
-                .then((res) => {
-                    console.log(res.data);
-                    this.setState({ images: [...this.state.images, ...res.data.results] })
-                })
-        }, 100000)
+            this.showContactList();
+        }, 1000)
     }
 
     handleLogout() {
@@ -45,45 +58,45 @@ class Home extends Component {
         }
         else {
             return (
-                <div>
-                    <AppBar style={{ textAlign: 'right', padding: '0 15px' }}>
-                        <h3 onClick={() => this.handleLogout()}>LOGOUT</h3>
-                    </AppBar>
-                    <div style={{
-                        display: 'flex',
-                        margin: '0 auto',
-                        width: '400px',
-                        flexDirection: 'column',
-                        height: "100", overflow: "auto"
-                    }}
-                    // id="scrollableDiv"  
+                <MuiThemeProvider theme={theme}>
+                    <AppBar className="common_appbar"
+                        style={{ textAlign: 'right', padding: '0 15px' }}
                     >
-                        <InfiniteScroll
-                            dataLength={this.state.images.length}
-                            next={this.getContactList}
-                            hasMore={true}
-                            loader={<PlaceholderLoader images={this.state.images} />}
-                            scrollableTarget="scrollableDiv"
-                        >
-                            {this.state.images.map((k) =>
-                                <div style={{
-                                    display: 'flex'
-                                }}>
-                                    <Avatar src={k.picture.large} style={{ width: '100px', height: '100px' }} />
-                                    <div style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        paddingLeft: '20px'
-                                    }}>
-                                        <span>Name: {k.name.first} {k.name.last}</span>
-                                        <span>{k.email}</span>
+                        <h3>CONTACTS</h3>
+                        <h4 style={{ cursor: 'pointer' }} onClick={() => this.handleLogout()}>LOGOUT</h4>
+                    </AppBar>
+                    <div className="home_page_background home_appbar"
+                        id="scrollableDiv"
+                    >
+                        <form className="user_list">
+                            <InfiniteScroll
+                                dataLength={this.state.userData.length}
+                                next={this.getContactList}
+                                hasMore={true}
+                                loader={<PlaceholderLoader userData={this.state.userData} />}
+                                scrollableTarget="scrollableDiv"
+                            >
+                                {this.state.userData.map((k) =>
+                                    <div className="user_profile">
+                                        <div style={{
+                                            display: 'flex',
+                                            padding: '10px 0'
+                                        }}>
+                                            <Avatar src={k.picture.large} style={{ width: '60px', height: '60px' }} />
+                                            <div className="user_details">
+                                                <span>{k.name.first} {k.name.last}</span>
+                                                <span>{k.email}</span>
+                                            </div>
+
+                                        </div>
+                                        <Divider variant="light" />
                                     </div>
-                                </div>
-                            )}
-                        </InfiniteScroll>
+                                )}
+
+                            </InfiniteScroll>
+                        </form>
                     </div>
-                </div>
+                </MuiThemeProvider >
             )
         }
     }
