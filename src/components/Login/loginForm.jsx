@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { TextField, Button, createMuiTheme, MuiThemeProvider, Dialog, InputAdornment, Snackbar } from '@material-ui/core';
+import { TextField, Button, createMuiTheme, MuiThemeProvider, Dialog, Snackbar } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
 

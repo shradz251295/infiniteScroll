@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { AppBar, Avatar, createMuiTheme, MuiThemeProvider, Divider } from '@material-ui/core';
 import { withRouter } from 'react-router';
 import { Redirect } from 'react-router-dom';
-import axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import PlaceholderLoader from '../comomon/placeholderLoader';
 import { getUserDetails } from '../../services/service';
